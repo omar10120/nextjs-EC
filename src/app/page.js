@@ -81,7 +81,7 @@ export default function Home(Component, pageProps) {
             )
           ) : (
             <div className="text-center py-10">
-              <h2 className="text-2xl mb-4">
+              <h2 className="text-2xl mb-4 text-black ">
                 Welcome My Friend ! Please log-in or register to access buying showing more details and much More...
               </h2>
               {activeView === "register" ? (
