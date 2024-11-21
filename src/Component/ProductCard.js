@@ -43,7 +43,7 @@ function ProductCard({ product, onMoreDetails, onAddToCart }) {
           {product.description || 'No category'}
         </p>
         {isLoggedIn && (
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-between ">
           {/* More Details Button */}
           <button
             onClick={() => onMoreDetails(product)}

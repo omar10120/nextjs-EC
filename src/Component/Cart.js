@@ -37,7 +37,7 @@ const Cart = (refreshOrders ) => {
       
       } else {
         const errorData = await response.json();
-        console.error(errorData.error);
+
       }
     } catch (error) {
       console.error('Error during checkout:', error);

@@ -18,10 +18,6 @@ export default function Navbar({ setActiveView, setIsLoggedIn }) {
   const base64Payload = token?.split('.')[1];
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-
-
-
-
   useEffect(() => {
     if (useridLocalStorge) {
       const checkUserOrders = async () => {
