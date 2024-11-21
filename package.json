@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "bcryptjs": "^2.4.3",
+    "heroicons": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "mysql2": "^3.11.3",

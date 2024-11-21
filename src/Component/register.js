@@ -103,6 +103,8 @@ export default function AuthForm({
     }
   };
 
+
+  
   return (
     <div className="flex items-center justify-center min-h-[400px] bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -118,13 +120,14 @@ export default function AuthForm({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black "
               placeholder="Enter your Email"
             />
           </div>
           <div className="text-start">
             <label className="block text-gray-600 mb-1">Password:</label>
             <input
+            
               type="password"
               value={password}
               onChange={(e) => {
@@ -132,7 +135,7 @@ export default function AuthForm({
                 validatePassword(e.target.value);
               }}
               required
-              className={`w-full px-4 py-2 border ${
+              className={`w-full px-4 py-2 border text-black ${
                 passwordError ? "border-red-500" : "border-gray-300"
               } rounded-lg focus:outline-none focus:ring-2 ${
                 passwordError ? "focus:ring-red-500" : "focus:ring-blue-500"
@@ -145,7 +148,7 @@ export default function AuthForm({
           </div>
           {mode === "register" && (
             <div className="text-start">
-              <label className="block text-gray-600 mb-1">Role:</label>
+              <label className="block text-gray-600 mb-1 text-black">Role:</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
