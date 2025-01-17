@@ -31,9 +31,9 @@ function ProductDetails({ product, onBack }) {
                 </div>
                 <div className="flex -mx-2 mb-4">
                     
-                    <div className="w-full px-2">
+                    {/* <div className="w-full px-2">
                         <button className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">Add to Wishlist</button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="md:flex-1 px-4">

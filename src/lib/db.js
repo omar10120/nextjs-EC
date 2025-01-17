@@ -9,6 +9,7 @@ import runMigrations from './migrate';  // Import migration script
 const connection = mysql.createPool({
   host: 'localhost',
   user: 'root',
+  password: 'newpassword',
   database: 'NextJsItems',
 });
 

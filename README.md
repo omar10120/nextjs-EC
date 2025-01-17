@@ -1,11 +1,12 @@
 
 ## Getting Started
 
-Step One :  run 'npm install' 
-Step Two : 
+## Step One :
+run 'npm install' 
+## Step Two : 
 To construct a database, be sure to run XAMPP; it will be produced automatically when the server is ran. Database name = [nextjsItems]
 By making changes to `app/page.js`, you may begin editing the page. As you alter the file, the page automatically updates.
-Step Three : 
+## Step Three : 
 create .env.local file in this path (..\nextjs\.env.local)  if not exsit fill with database_url should look like this :
 
 
@@ -13,7 +14,8 @@ DATABASE_URL=mysql://root:@localhost:3306/nextjs
 JWT_SECRET=secret-key
 
 
-Step Four:  run the development server :
+## Step Four:
+ run the development server :
 
 ```bash
 npm run dev

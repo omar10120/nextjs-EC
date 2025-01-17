@@ -10,7 +10,12 @@
     "migrate": "node src/lib/migrate.js"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.0",
+    "@mui/icons-material": "^6.4.0",
+    "@mui/material": "^6.4.0",
+    "@mui/styled-engine-sc": "^6.4.0",
     "bcryptjs": "^2.4.3",
     "heroicons": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
@@ -18,7 +23,8 @@
     "mysql2": "^3.11.3",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028"
+    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "styled-components": "^6.1.14"
   },
   "devDependencies": {
     "eslint": "^8",

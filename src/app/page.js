@@ -41,7 +41,7 @@ export default function Home() {
   }, []);
 
   const handleAuthSuccess = () => {
-    setIsLoggedIn(true);
+    setIsLoggedIn(true);``
     setActiveView("products"); // Default to products after login
   };
 
@@ -83,7 +83,7 @@ export default function Home() {
                 [
                   <Register
                     key="register-component"
-                    mode="register"
+                    mode="register" 
                     onAuthSuccess={handleAuthSuccess}
                     onClearMessage={handleSetClearMessage}
                   />,

@@ -2,18 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
 import ProductDetails from './ProductDetails';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 function App() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); 
   const [searchQuery, setSearchQuery] = useState(''); 
   const [selectedProduct, setSelectedProduct] = useState(null); 
-
+  const [loading, setloading ] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
+    setloading(true)
     // Filter products based on the search query
     const lowerCaseQuery = searchQuery.toLowerCase();
     const queryAsNumber = parseFloat(searchQuery);
@@ -26,6 +28,7 @@ function App() {
       
     );
     setFilteredData(filtered);
+    setloading(false);
   }, [searchQuery, data]);
 
   const fetchData = async () => {
@@ -112,11 +115,20 @@ function App() {
   </div>
 </div>         
           {/* end  searchbar */}
-
+        
           {/* Product Grid */}
           {filteredData.length === 0 ? (
             <div role="status" className="h-60 flex items-center justify-center">
+              {loading ? 
+                <Box sx={{ display: 'flex' }}>
+                  <CircularProgress />
+                </Box>
+             : 
               <p className="text-gray-500">No products found</p>
+             }
+              
+              
+
             </div>
           ) : (
             <ProductGrid products={filteredData} onProductClick={handleProductClick} />

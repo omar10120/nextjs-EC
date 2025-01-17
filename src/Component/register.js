@@ -1,8 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useState,useEffect } from 'react';
+
 import { useRouter } from "next/navigation";
 import { useUser } from "../context/UserContext";
-
+import Snackbar from '@mui/material/Snackbar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
 export default function AuthForm({
   mode = "login",
   onAuthSuccess,
@@ -17,7 +23,7 @@ export default function AuthForm({
   const [passwordError, setPasswordError] = useState(""); // For password validation error messages
   const { setUserId } = useUser(); // Get setUserId from context
   const [userslist, setUsersList] = useState([]);
-
+  const [open, setOpen] = React.useState(false);
   const router = useRouter();
 
   // Password validation regex
@@ -79,7 +85,7 @@ export default function AuthForm({
 
       if (response.ok) {
         setMessage(
-          `Success! ${mode === "login" ? "Logged in" : "Registered"} successfully.`
+          ` ${mode === "login" ? "Logged in" : "Registering Done "} successfully.`
         );
 
         if (mode === "login") {
@@ -101,8 +107,19 @@ export default function AuthForm({
     } catch (error) {
       setMessage("An error occurred. Please try again." + error);
     }
+    finally{
+      setOpen(true)
+    }
   };
 
+  
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   
   return (
@@ -167,7 +184,7 @@ export default function AuthForm({
             {mode === "login" ? "Login" : "Sign Up"}
           </button>
         </form>
-        {message && (
+        {/* {message && (
           <p
             className={`mt-4 text-center ${
               message.includes("Success") ? "text-green-600" : "text-red-600"
@@ -175,7 +192,21 @@ export default function AuthForm({
           >
             {message}
           </p>
+
+        )} */}
+        {message && (
+         <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+                 <Alert
+                   onClose={handleClose}
+                   severity="success"
+                   variant="filled"
+                   sx={{ width: '100%' }} 
+                   >
+                   {message}
+                 </Alert>
+               </Snackbar>
         )}
+
       </div>
     </div>
   );

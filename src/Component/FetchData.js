@@ -1,16 +1,53 @@
-import { useState, useEffect } from 'react';
-import Modal from '../Component/Modal';
 
+import React, { useEffect, useState } from 'react';
+import Modal from '../Component/Modal';
+import {
+  Snackbar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Alert,
+  Slide,
+  useTheme,
+  DialogContentText,
+  TextField 
+  
+} from '@mui/material';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 function DataTable() {
   const [data, setData] = useState([]);
   const [newItem, setNewItem] = useState({ name: '', price: '', description: '' });
   const [editingItem, setEditingItem] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const [successMessage, setSuccessMessage] = useState('');
   const [animation, setAnimation] = useState('');
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [open, setOpen] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalAddOpen, setisModalAddOpen] = useState(false);
+  const [opendelete, setOpendelete] = React.useState(false);
+  const [itemid, setitemid] = useState('');
+
+  // dialog 
+
+  const theme = useTheme();
+
+  // delete dialog
+  const handleClickOpenDelete = async (id) => {
+    setOpendelete(true);
+    setitemid(id)
+  };
+
+  const handleCloseDelete = () => {
+    setOpendelete(false);
+  };
+
 
   useEffect(() => {
     fetchData();
@@ -27,7 +64,10 @@ function DataTable() {
   };
 
   const handleAdd = async () => {
+
+ 
     try {
+
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,7 +75,10 @@ function DataTable() {
       });
       const result = await response.json();
       if(newItem.name == '' || newItem.price == '' || newItem.description== '')
-        showSuccessMessage("You Should Fill Product Details"); //Checking Empty of Product Details 
+        {
+          showSuccessMessage("You Should Fill Product Details"); //Checking Empty of Product Details 
+            return; 
+        }
       else{
         setData([...data, result]); // Update state with the new item
         setNewItem({ name: '', price: '', description: '' });
@@ -45,11 +88,18 @@ function DataTable() {
     } catch (error) {
       console.error("Error adding item:", error);
     }
+    finally{
+      setOpen(true);
+      setisModalAddOpen(false);
+      newItem.name = '';
+      newItem.price = '';
+      newItem.description = '';
+    }
   };
 
-  const handleEdit = (item) => {
-    setEditingItem(item);
+  const  handleEdit = async (item) => {
     setIsModalOpen(true); // Open the modal
+    setEditingItem(item);
   };
 
   const handleUpdate = async (id) => {
@@ -70,6 +120,9 @@ function DataTable() {
       showSuccessMessage("Product updated successfully!");
     } catch (error) {
       console.error("Error updating item:", error);
+    }finally{
+
+      setOpen(true)
     }
   };
 
@@ -85,6 +138,9 @@ function DataTable() {
       showSuccessMessage("Product deleted successfully!");
     } catch (error) {
       console.error("Error deleting item:", error);
+    } finally{
+      setOpen(true);
+      setOpendelete(false);
     }
   };
 
@@ -106,6 +162,27 @@ function DataTable() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
+  
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+  const handleCloseDialog=()=>{
+    setIsModalOpen(false)
+  }
+
+  const handleadddialogOpen=()=>{
+    setisModalAddOpen(true)
+  }
+
+  const handleadddialogClose=()=>{
+    setisModalAddOpen(false)
+  }
+
+
   return (
     <>
     
@@ -114,38 +191,71 @@ function DataTable() {
 
       {successMessage && (
 
-        <div className={` border  ${successMessage == "You Should Fill Product Details"? 'text-red-400 border-red-400 bg-red-100': 'text-green-700 border-green-400 bg-green-100'}  px-4 py-3 rounded relative mb-4`}>
-          {successMessage}
-        </div>
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+      <Alert
+        onClose={handleClose}
+        severity="success"
+        variant="filled"
+        sx={{ width: '100%' }} 
+        >
+        {successMessage}
+      </Alert>
+      </Snackbar>
       )}
 
-      <div className="mb-6">
-        
-        <input
-          type="text"
-          placeholder="Name"
-          value={newItem.name}
-          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-          className="border p-2 mr-2 rounded-xl "
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={newItem.price}
-          onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-          className="border p-2 mr-2 rounded-xl"
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={newItem.description}
-          onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-          className="border p-2 mr-2 rounded-xl"
-        />
-        <button onClick={handleAdd} className="bg-blue-500 text-white px-4 py-2 rounded">
-          Add Item
-        </button>
-      </div>
+        <div className="mb-6 flex justify-end">
+          <Button variant="contained" onClick={handleadddialogOpen}>Add Item</Button>
+        </div>
+      
+
+        <React.Fragment>
+            <Dialog
+              open={isModalAddOpen}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={handleadddialogClose}
+              aria-describedby="alert-dialog-slide-description"
+            >
+              <DialogTitle>{"Add Item"}</DialogTitle>
+                      <DialogContent>
+                  {/* Don't use DialogContentText if it will contain divs */}
+                 <div className='flex flex-col gap-y-5 my-2'>
+                    <TextField id="outlined-basic" label="Name" variant="outlined"  onChange={(e) => setNewItem({ ...newItem, name: e.target.value })} />
+                    <TextField id="outlined-basic" type='number' label="Price" variant="outlined"   onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}    />
+                    <TextField id="outlined-basic" label="Description	" variant="outlined"   onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}  />
+                 </div>
+                  {/* <input
+                    type="text"
+                    placeholder="Name"
+                    value={newItem.name}
+                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                    className="border p-2 mr-2 rounded-xl "
+                  />
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    value={newItem.price}
+                    onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                    className="border p-2 mr-2 rounded-xl"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Description"
+                    value={newItem.description}
+                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                    className="border p-2 mr-2 rounded-xl"
+                  /> */}
+            
+                </DialogContent>
+
+              <DialogActions>
+                <Button onClick={handleadddialogClose}>Disagree</Button>
+                <Button onClick={ handleAdd}>Add Item</Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
+
+     
 
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 divide-y divide-gray-200 ">
@@ -169,11 +279,14 @@ function DataTable() {
                   <button onClick={() => handleEdit(item)} className="px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out">
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
-                    Delete
+                  <button  onClick={()=>handleClickOpenDelete(item.id)} className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
+                    Delete  
+                          
                   </button>
                 </td>
               </tr>
+
+              
             ))}
           </tbody>
         </table>
@@ -200,49 +313,87 @@ function DataTable() {
       </div>
 
       {/* Edit Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h3 className="text-xl mb-4">Edit Item</h3>
-        {editingItem && (
-          <div>
-            <input
-              type="text"
-              placeholder="Name"
-              value={editingItem.name}
-              onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
-              className="border p-2 mb-2 w-full rounded-xl"
-            />
-            <input
-              type="number"
-              placeholder="Price"
-              value={editingItem.price}
-              onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
-              className="border p-2 mb-2 w-full rounded-xl"
-            />
-            <input
-              type="text"
-              placeholder="Description"
-              value={editingItem.description}
-              onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-              className="border p-2 mb-2 w-full rounded-xl"
-            />
-            <button
-              onClick={() => handleUpdate(editingItem.id)}
-              className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+            <React.Fragment>
+            <Dialog
+              open={isModalOpen}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={handleCloseDialog}
+              aria-describedby="alert-dialog-slide-description"
             >
-              Update Item
-            </button>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-      </Modal>
+              <DialogTitle>{"Edit Item"}</DialogTitle>
+              <DialogContent>
+  {/* Don't use DialogContentText if it will contain divs */}
+  {editingItem && ( 
+      <div className='flex flex-col gap-y-5 my-2'>
+        {/* <input
+          type="text"
+          placeholder="Name"
+          value={editingItem.name}
+          onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+          
+          className="border p-2 mr-2 rounded-xl"
+        /> */}
+        <TextField id="outlined-basic" label="Name" variant="outlined"  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })} value={editingItem.name} />
+        <TextField id="outlined-basic" type='number'  label="Price" variant="outlined"   onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}    value={editingItem.price} />
+        <TextField id="outlined-basic" label="Description	" variant="outlined"   onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })} value={editingItem.description} />
+
+        {/* <input
+          type="number"
+          placeholder="Price"
+          value={editingItem.price}
+          onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
+          className="border p-2 mr-2 rounded-xl"
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={editingItem.description}
+          onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+          className="border p-2 mr-2 rounded-xl"
+        /> */}
+      </div>
+    )}
+</DialogContent>
+
+              <DialogActions>
+                <Button onClick={handleCloseDialog}>Disagree</Button>
+                <Button onClick={() => handleUpdate(editingItem.id)}>Update Item</Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
     </div>
 
 
+
+  {/* Delete Dialog*/}
+    <React.Fragment>
+      <Dialog
+        // fullScreen={fullScreen}
+        open={opendelete}
+        onClose={handleCloseDelete}
+        TransitionComponent={Transition}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          {"Confirm Message"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this product!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleCloseDelete}>
+            Disagree
+          </Button>
+            <Button onClick={() => handleDelete(itemid)} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+    
     </>
 
 
@@ -250,3 +401,4 @@ function DataTable() {
 }
 
 export default DataTable;
+
